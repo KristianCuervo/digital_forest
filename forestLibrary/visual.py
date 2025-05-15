@@ -14,8 +14,8 @@ def build_forest_graph(forest: Forest, grid_spacing: float = 5.0) -> graph.Graph
 
         verts, edges, _ = realize(tree.lsystem)
         verts = swap_verts_array_YZ(verts)
-        offset = np.array([i * grid_spacing, tree.height_mod, j * grid_spacing], dtype=float)
-        #offset = np.array([i * grid_spacing, 0.0, j * grid_spacing], dtype=float)
+        #offset = np.array([i * grid_spacing, tree.height_mod, j * grid_spacing], dtype=float)
+        offset = np.array([i * grid_spacing, 0.0, j * grid_spacing], dtype=float)
         base   = len(g.nodes())
             
         for v in verts:

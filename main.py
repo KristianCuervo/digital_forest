@@ -32,6 +32,7 @@ def main():
         ) # display graph
 
         time.sleep(delay) # frame rate 
+        print("Generation", gen)
 
 if __name__ == "__main__":
     main()

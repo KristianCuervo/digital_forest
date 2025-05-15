@@ -36,3 +36,72 @@ class Analyse:
             }
         return result
                 
+
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
+import matplotlib.patches as mpatches
+
+def plot_forest_grid(forest, save_path="forest.png"):
+    """
+    Plots the forest grid as a 2D colored map.
+    Each tile is colored based on the tree species: oak, birch, pine, shrub.
+    Empty tiles (None) are white.
+    Oak and birch have similar greens.
+    
+    In headless environments, optionally saves the figure to disk instead of displaying.
+    
+    Parameters:
+    -----------
+    grid : 2D numpy.ndarray
+        Array of tree instances or None. Each tree must have `genes['species']` attribute.
+    save_path : str or None
+        File path to save the figure (e.g., 'forest.png'). If None, returns the figure object.
+    
+    Returns:
+    --------
+    fig : matplotlib.figure.Figure (if save_path is None)
+    """
+    species_colors = {
+        'oak': '#228B22',    # forest green
+        'birch': '#2E8B57',  # sea green (similar to oak)
+        'pine': '#8B4513',   # saddle brown
+        'shrub': '#ADFF2F'   # green yellow
+    }
+    empty_color = '#FFFFFF'  # white for empty tiles
+    water_color = '#0000FF'  # blue for water (if applicable)
+    grid = forest.grid
+    n, m = grid.shape
+    img = np.zeros((n, m, 4))
+    for i in range(1, n):
+        for j in range(1, m):
+            tree = grid[i, j]
+            if tree is None and forest.noise_grid[i, j] < 0:
+                color = water_color
+                print("water")
+            elif tree is None and forest.noise_grid[i, j] >= 0:
+                color = empty_color
+            else:
+                species = tree.genes.get('species')
+                color = species_colors.get(species, '#CCCCCC')
+            img[i, j] = mcolors.to_rgba(color)
+
+    fig, ax = plt.subplots()
+    ax.imshow(img, interpolation='none')
+    ax.set_xticks([])
+    ax.set_yticks([])
+    print("something")
+
+    patches = [
+        mpatches.Patch(color=color, label=species.capitalize())
+        for species, color in species_colors.items()
+    ]
+    ax.legend(handles=patches, loc='upper right', bbox_to_anchor=(1.15, 1))
+    plt.tight_layout()
+    
+    if save_path:
+        fig.savefig(save_path, bbox_inches='tight')
+        plt.close(fig)
+        return None
+    else:
+        return fig
