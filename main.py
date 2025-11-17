@@ -5,7 +5,7 @@ from pygel3d import gl_display as gl
 
 def main():
 
-    total_generations = 10
+    total_generations = 200
     delay            = 0.05
     spacing          = 4.0
 
@@ -13,8 +13,8 @@ def main():
     viewer = gl.Viewer()
 
     # 2) Set up your forest
-    forest = Forest(size=10, initial_population=0.5, spawn_probability=0.25, species_subset=['honda', 'pine','shrub'], 
-                    scenario='polar')
+    forest = Forest(size=9, initial_population=0.5, spawn_probability=0.25, species_subset=['honda', 'pine','shrub'], 
+                    scenario='temperate')
 
 
     # Simulation loop
@@ -32,7 +32,6 @@ def main():
         ) # display graph
 
         time.sleep(delay) # frame rate 
-        print("Generation", gen)
 
 if __name__ == "__main__":
     main()

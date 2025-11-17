@@ -63,25 +63,25 @@ def plot_forest_grid(forest, save_path="forest.png"):
     fig : matplotlib.figure.Figure (if save_path is None)
     """
     species_colors = {
-        'oak': '#228B22',    # forest green
+        'oak': '#808000',    # forest green
         'birch': '#2E8B57',  # sea green (similar to oak)
         'pine': '#8B4513',   # saddle brown
-        'shrub': '#ADFF2F'   # green yellow
+        'shrub': '#ADFF2F',   # green yellow
+        'water': '#0000FF'  # blue for water (if applicable)
     }
     empty_color = '#FFFFFF'  # white for empty tiles
     water_color = '#0000FF'  # blue for water (if applicable)
-    grid = forest.grid
+    grid = forest.grid[1:-1, 1:-1]  # Exclude the boundary of None values
     n, m = grid.shape
     img = np.zeros((n, m, 4))
-    for i in range(1, n):
-        for j in range(1, m):
+    for i in range(0, n):
+        for j in range(0, m):
             tree = grid[i, j]
-            if tree is None and forest.noise_grid[i, j] < 0:
+            if forest.noise_grid[i, j] < 0:
                 color = water_color
-                print("water")
             elif tree is None and forest.noise_grid[i, j] >= 0:
                 color = empty_color
-            else:
+            elif tree is not None:
                 species = tree.genes.get('species')
                 color = species_colors.get(species, '#CCCCCC')
             img[i, j] = mcolors.to_rgba(color)

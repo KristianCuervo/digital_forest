@@ -111,7 +111,7 @@ class Tree:
             gamma = 0.5
             pass
         
-        return alpha*(self.height + self.height_mod) + beta*self.width + gamma*np.sqrt((self.height + self.height_mod)*self.width)
+        return alpha*(self.height + self.height_mod) + beta*self.width + gamma*np.sqrt((np.abs(self.height + self.height_mod))*self.width)
     
 
     # ----------------- DEATH ROLLS -----------------

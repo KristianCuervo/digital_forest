@@ -1,9 +1,6 @@
-from math import cos, sin, pi, sqrt, exp, atan2
-from numpy import ndindex, array, ndarray, dot, empty, linspace, clip, abs, ceil, zeros, repeat
-from numpy.linalg import norm
-from numpy.random import normal
-from numpy.fft import fft2,fftshift
-from random import uniform
+from math import cos, sin, pi, sqrt, exp
+from numpy import ndindex, array, ndarray, dot, empty
+from numpy.random import  default_rng
 
 def vec2(x,y):
     v = empty((2,))
@@ -27,16 +24,17 @@ def vec4(x,y,z,w):
     return v
 
 class Noise:
-    def __init__(self, sigma:int, N:int):
+    def __init__(self, sigma:int, N:int, seed:int=0):
         self.sigma = sigma
         self.noise_waves = empty((N,4))
-
+        self.random = default_rng(seed)
+        
         for n in range(N):
-            Xi = normal(0, self.sigma)
+            Xi = self.random.normal(0, self.sigma)
 
             self.noise_waves[n,0] = (3 * self.sigma + Xi) * cos((2 * pi * n) / N)
             self.noise_waves[n,1] = (3 * self.sigma + Xi) * sin((2 * pi * n) / N)
-            self.noise_waves[n,2] = uniform(0, 2 * pi)
+            self.noise_waves[n,2] = self.random.uniform(0, 2 * pi)
             self.noise_waves[n,3] = exp(-(pow(Xi, 2))/pow(self.sigma,2))
 
     def noise(self, x):
@@ -49,16 +47,16 @@ class Noise:
     def compute_noise_grid(self, scale, span):
         dim = span
         out = empty((dim,dim))
-        s = (scale/dim)
+        s = scale
         for i,j in ndindex((dim,dim)):
             p = s*vec2(i,j)
             out[i,j] = self.noise(p)
         return out
     
-    def compute_turbulence_grid(self, scale, span, octaves=3):
+    def compute_turbulence_grid(self, scale, span, octaves=10):
         dim = span
         out = empty((dim,dim))
-        s = (0.5/dim)
+        s = scale
         for i,j in ndindex((dim,dim)):
             p = s*vec2(i,j)
             out[i,j] = self.turbulence(p,octaves)
@@ -70,8 +68,7 @@ class Noise:
         I = 0
         c=1 #--- You can change this value to adjust the intensity of the turbulence
         #--- Part 3: Insert code that sums octaves of noise producing "turbulence"
-        for i in range(octaves):
-            I += (1/(c*2**i)) * self.noise((2**i)*x)
+        for i in range(1,octaves):
+            I += (1/(c*2*i)) * self.noise((2*i)*x)    
         #--- End of Part 3
         return I
-  

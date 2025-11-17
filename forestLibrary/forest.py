@@ -32,9 +32,11 @@ class Forest:
         self.size = size # Tree Size
         self.grid = np.empty((size+2, size+2), dtype=object)
 
-        self.noise = Noise(3, 90)
-        self.noise_grid = self.noise.compute_noise_grid(30, self.size+2)
-        self.noise_grid = np.ones((self.size+2, self.size+2))
+        self.noise = Noise(sigma=3, N=90, seed=seed) # Noise is used to create a height map for the trees
+        noise_vertical_scale = 100
+        vertical_offset = 0.05
+        self.noise_grid = noise_vertical_scale * (self.noise.compute_turbulence_grid(0.01, size+2, 3) + vertical_offset)
+        #self.noise_grid = np.ones((self.size+2, self.size+2))
         #print(self.noise_grid)
 
         # Forest is spawned on grid with random tree species
@@ -159,7 +161,7 @@ class Forest:
                 n_offspring = int(np.ceil(k_reproductive_rate * len(gene_pool)))
                 children = self.genetic_algorithm.generate_children(gene_pool, n_offspring) # Creates n amount of children from the gene_pool
                 for child in children:
-                    empty_cells = np.argwhere(self.grid == None) # Look at current empty cells
+                    empty_cells = np.argwhere(self.grid[1:-1, 1:-1] == None) # Look at current empty cells
                     if len(empty_cells) > 0: # 
                         cell = random.choice(empty_cells) # Picks a random cell to spawn on 
                         self.grid[cell[0], cell[1]] = SPECIES_CLASS[species](height_mod=self.noise_grid[cell[0],cell[1]], genes=child) # Spawns a child tree on tile

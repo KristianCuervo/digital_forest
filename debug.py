@@ -24,7 +24,7 @@ def main():
     total_generations = 101
    
     forest = Forest(size=30, initial_population=0.5, spawn_probability=0.25, species_subset=['honda', 'pine', 'shrub'], 
-                    scenario='polar')
+                    scenario='temperate')
 
     for gen in range(total_generations):
         forest.step()            
